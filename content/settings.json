@@ -1,0 +1,16 @@
+{
+  "siteName": "KU창업클럽 AC 업무 안내",
+  "orgName": "건국대학교 창업지원본부 창업지원센터",
+  "email": "startup@konkuk.ac.kr",
+  "phone": "02-450-3278",
+  "projectCode": "[혁신8: C301] 전교생 기업가정신",
+  "projectYear": "2차년도",
+  "budgetItem": "교육·연구프로그램 개발운영비",
+  "surveyLecture": "https://bit.ly/3S05tHq",
+  "surveyMixed": "https://bit.ly/4jJVi5L",
+  "bizNo": "207-82-00062",
+  "manual": "대학혁신지원사업 업무매뉴얼 3주기 2nd Edition(2026. 3.)",
+  "updated": "2026. 10. 22.",
+  "steps": ["1.md", "2.md", "3.md", "4.md", "5.md", "6.md"],
+  "costs": ["snack.md", "meal.md", "meeting.md", "lecture.md", "mentoring.md", "judging.md", "promo.md", "prototype.md", "prize.md", "gift.md"]
+}
