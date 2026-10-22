@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var data = { settings: null, forms: [], steps: [], costs: [], home: "", faq: "", contact: "" };
+  var data = { settings: null, forms: [], logos: [], steps: [], costs: [], home: "", faq: "", contact: "" };
   var CHECK_KEY = "ku-ac-checks-v1";
   var PICK_KEY = "ku-ac-picked-v1";
   var view = document.getElementById("view");
@@ -327,8 +327,42 @@
     bar.style.width = boxes.length ? (done / boxes.length * 100) + "%" : "0";
   }
 
+  // 여러 파일을 브라우저에서 zip으로 묶어 내려받는다.
+  function zipButton(label, zipName, files, id) {
+    var wrap = h("div", "zip-row");
+    var btn = h("button", "dl", ICON_DL + esc(label));
+    btn.type = "button"; btn.id = id;
+    var note = h("span", "zip-note");
+    note.setAttribute("aria-live", "polite");
+    btn.addEventListener("click", function () {
+      if (!window.JSZip) { note.textContent = "압축 기능을 불러오지 못했다. 파일을 하나씩 내려받는다."; return; }
+      btn.disabled = true; note.textContent = "묶는 중 (0/" + files.length + ")";
+      var zip = new window.JSZip(), done = 0;
+      Promise.all(files.map(function (f) {
+        return fetch(encodeURI(f.path)).then(function (r) {
+          if (!r.ok) throw new Error(f.name);
+          return r.blob();
+        }).then(function (b) { zip.file(f.name, b); done++; note.textContent = "묶는 중 (" + done + "/" + files.length + ")"; });
+      })).then(function () {
+        return zip.generateAsync({ type: "blob" });
+      }).then(function (blob) {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob); a.download = zipName;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+        note.textContent = "내려받기를 시작했다.";
+      }).catch(function (e) {
+        note.textContent = "파일을 찾지 못했다: " + e.message;
+      }).then(function () { btn.disabled = false; });
+    });
+    wrap.appendChild(btn); wrap.appendChild(note);
+    return wrap;
+  }
+
   function viewForms() {
     view.appendChild(header("양식 모음", "양식 1~11 내려받기", "모두 한글(hwpx) 파일이다. 증빙 양식은 내려받은 파일에 그대로 작성해 한글 원본으로 제출한다."));
+    view.appendChild(zipButton("양식 전체 zip", "KU창업클럽-AC-양식-전체.zip",
+      data.forms.map(function (f) { return { name: f.file, path: "forms/" + f.file }; }), "zip-forms"));
     var byStep = {};
     data.forms.forEach(function (f) { (byStep[f.step] = byStep[f.step] || []).push(f); });
     Object.keys(byStep).sort().forEach(function (n) {
@@ -345,6 +379,25 @@
       });
       view.appendChild(g);
     });
+
+    if (data.logos.length) {
+      var lg = h("section", "logos");
+      lg.id = "logos";
+      lg.appendChild(h("h2", "section-h", "로고"));
+      lg.appendChild(h("p", "lede", "계획서, 결과보고서, 홍보물에 쓰는 로고 파일."));
+      lg.appendChild(zipButton("로고 전체 zip", "KU창업클럽-AC-로고-전체.zip",
+        data.logos.map(function (l) { return { name: l.file.split("/").pop(), path: l.file }; }), "zip-logos"));
+      var grid = h("div", "logo-grid");
+      data.logos.forEach(function (l) {
+        var c = h("div", "logo-card");
+        c.innerHTML = '<div class="logo-thumb"><img src="' + esc(l.file) + '" alt="' + esc(l.name) + '" loading="lazy"></div>' +
+          "<b>" + esc(l.name) + '</b><span class="when">' + esc(l.desc) + " · " + esc(l.size) + "</span>" +
+          '<a class="dl" href="' + esc(l.file) + '" download>' + ICON_DL + "PNG</a>";
+        grid.appendChild(c);
+      });
+      lg.appendChild(grid);
+      view.appendChild(lg);
+    }
   }
 
   function viewFaq() {
@@ -450,6 +503,7 @@
       var s = data.settings;
       return Promise.all([
         fetchText("content/forms.json").then(function (t) { data.forms = JSON.parse(t); }),
+        fetchText("content/logos.json").then(function (t) { data.logos = JSON.parse(t); }, function () { data.logos = []; }),
         Promise.all(s.steps.map(function (f) { return fetchText("content/steps/" + f).then(parseDoc); })).then(function (d) { data.steps = d; }),
         Promise.all(s.costs.map(function (f) {
           return fetchText("content/costs/" + f).then(function (t) { var d = parseDoc(t); d.slug = f.replace(/\.md$/, ""); return d; });

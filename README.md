@@ -9,7 +9,7 @@ AC 단체 운영진이 지원 항목, 제출 양식과 시기, 증빙 기준을 
 
 ```
 index.html            화면 틀
-assets/               스타일, 스크립트, 로고, 마크다운 변환기(marked 12.0.2, MIT)
+assets/               스타일, 스크립트, 로고(img/), 라이브러리(vendor/: marked 12.0.2, JSZip 3.10.1, 모두 MIT)
 content/              관리자가 고치는 내용 (마크다운·JSON)
 forms/                양식 hwpx 15개 (공개용으로 개인정보 정리본)
 .nojekyll             GitHub Pages가 .md 파일을 변환하지 않도록 하는 설정

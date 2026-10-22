@@ -11,6 +11,24 @@
   "bizNo": "207-82-00062",
   "manual": "대학혁신지원사업 업무매뉴얼 3주기 2nd Edition(2026. 3.)",
   "updated": "2026. 10. 22.",
-  "steps": ["1.md", "2.md", "3.md", "4.md", "5.md", "6.md"],
-  "costs": ["snack.md", "meal.md", "meeting.md", "lecture.md", "mentoring.md", "judging.md", "promo.md", "prototype.md", "prize.md", "gift.md"]
+  "steps": [
+    "1.md",
+    "2.md",
+    "3.md",
+    "4.md",
+    "5.md",
+    "6.md"
+  ],
+  "costs": [
+    "snack.md",
+    "meal.md",
+    "meeting.md",
+    "lecture.md",
+    "mentoring.md",
+    "judging.md",
+    "promo.md",
+    "prototype.md",
+    "prize.md",
+    "gift.md"
+  ]
 }
